@@ -33,8 +33,8 @@ JAVAFILES.com.sun.javatest.diff := \
 $(BUILDDIR)/classes.com.sun.javatest.diff.ok: \
 		$(JAVAFILES.com.sun.javatest.diff) \
 		$(BUILDDIR)/classes.com.sun.javatest.regtest.ok
-	CLASSPATH="$(CLASSDIR)$(PS)$(JAVATEST_JAR)$(PS)$(ANT_JAR)" \
-	    $(REGTEST_TOOL_JAVAC) $(REGTEST_TOOL_JAVAC_OPTIONS) \
+	$(REGTEST_TOOL_JAVAC) $(REGTEST_TOOL_JAVAC_OPTIONS) \
+		-classpath "$(CLASSDIR)$(PS)$(JAVATEST_JAR)$(PS)$(ANT_JAR)" \
 		-d $(CLASSDIR) \
 		-encoding ASCII \
 		$(JAVAFILES.com.sun.javatest.diff)
