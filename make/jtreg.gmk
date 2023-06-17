@@ -43,8 +43,9 @@ JAVAFILES.com.sun.javatest.regtest-agentvm := \
 $(BUILDDIR)/classes.com.sun.javatest.regtest.agent.ok: \
 		$(JAVAFILES.com.sun.javatest.regtest-agentvm)
 	$(MKDIR) -p $(CLASSDIR)
-    $(REGTEST_AGENT_JAVAC) $(REGTEST_AGENT_JAVAC_OPTIONS) \
-	    -classpath "$(CLASSDIR)$(PS)$(JAVATEST_JAR)$(PS)$(JUNIT_CLASSPATH)$(PS)$(TESTNG_CLASSPATH)" \
+	$(REGTEST_AGENT_JAVAC) \
+		$(REGTEST_AGENT_JAVAC_OPTIONS) \
+		-classpath "$(CLASSDIR)$(PS)$(JAVATEST_JAR)$(PS)$(JUNIT_CLASSPATH)$(PS)$(TESTNG_CLASSPATH)" \
 		-d $(CLASSDIR) \
 		-encoding ASCII \
 		$(AGENT_DEBUG_FLAGS) \
