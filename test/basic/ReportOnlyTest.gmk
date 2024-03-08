@@ -26,8 +26,8 @@
 #----------------------------------------------------------------------
 
 ifdef HEADLESS
-REPORT_EXPECT_PASS := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 91; else echo 91; fi)
-REPORT_EXPECT_FAIL := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 40; else echo 40; fi)
+REPORT_EXPECT_PASS := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 93; else echo 90; fi)
+REPORT_EXPECT_FAIL := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 44; else echo 32; fi)
 else
 REPORT_EXPECT_PASS := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 93; else echo 90; fi)
 REPORT_EXPECT_FAIL := $(shell if [ ${JAVA_SPECIFICATION_VERSION} -lt 18 ]; then echo 44; else echo 32; fi)
