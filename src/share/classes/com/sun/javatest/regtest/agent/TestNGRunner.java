@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.testng.IConfigurationListener;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
 import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ITestContext;
@@ -114,7 +116,7 @@ public class TestNGRunner implements MainActionHelper.TestRunner {
     }
 
     public static class RegressionListener
-            implements ITestListener, IConfigurationListener {
+            implements ITestListener, IConfigurationListener, IInvokedMethodListener {
         enum InfoKind { CONFIG, TEST }
 
         private final AtomicInteger count = new AtomicInteger();
@@ -146,6 +148,15 @@ public class TestNGRunner implements MainActionHelper.TestRunner {
         }
 
         @Override
+        public void afterInvocation(final IInvokedMethod method, final ITestResult itr) {
+            if (isJtregSkipped(itr)) {
+                // change the test result status to skipped instead of failed
+                itr.setStatus(SKIP);
+                return;
+            }
+        }
+
+        @Override
         public void onTestFailure(ITestResult itr) {
             failureCount.incrementAndGet();
             report(InfoKind.TEST, itr);
@@ -154,7 +165,8 @@ public class TestNGRunner implements MainActionHelper.TestRunner {
         @Override
         public void onTestSkipped(ITestResult itr) {
             Throwable t = itr.getThrowable();
-            if (t != null && !(t instanceof SkipException)) {
+            boolean isSkippedException = t instanceof SkipException || isJtregSkipped(itr);
+            if (t != null && !isSkippedException) {
                 onTestFailure(itr);
                 return;
             }
@@ -184,6 +196,11 @@ public class TestNGRunner implements MainActionHelper.TestRunner {
 
         @Override
         public void onConfigurationFailure(ITestResult itr) {
+            if (isJtregSkipped(itr)) {
+                configSkippedCount.incrementAndGet();
+                report(InfoKind.CONFIG, itr);
+                return;
+            }
             configFailureCount.incrementAndGet();
             report(InfoKind.CONFIG, itr);
         }
@@ -251,6 +268,14 @@ public class TestNGRunner implements MainActionHelper.TestRunner {
                    sb.append(value);
                 }
             }
+        }
+
+        private static boolean isJtregSkipped(final ITestResult itr) {
+            final Throwable t = itr.getThrowable();
+            if (t == null) {
+                return false;
+            }
+            return t.getClass().getName().equals("jtreg.SkippedException");
         }
 
         private String statusToString(int s) {

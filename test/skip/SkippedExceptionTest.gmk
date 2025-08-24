@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -37,13 +37,17 @@ $(BUILDTESTDIR)/SkippedExceptionTest.agentvm.ok: $(JTREG_IMAGEDIR)/lib/javatest.
 		$(TESTDIR)/skip \
 			> $(@:%.ok=%/jt.log) 2>&1  || \
 			true "non-zero exit code from JavaTest intentionally ignored"
-	$(GREP) -s "Test results: passed: 1; failed: 2" $(@:%.ok=%/jt.log) > /dev/null
+	$(GREP) -s "Test results: passed: 2; failed: 2" $(@:%.ok=%/jt.log) > /dev/null
 	$(GREP) -s "^TestKnownSkippedException.java \+Passed. Skipped: jtreg.SkippedException: known exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
 	$(GREP) -s "^TestUnknownJtregSkippedException.java \+Failed. Execution failed: \`main' threw exception: jtreg.SkippedException2: unknown exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
 	$(GREP) -s "^TestUnknownSkippedException.java \+Failed. Execution failed: \`main' threw exception: SkippedException: unknown exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
+	$(GREP) -s "^test TestngThrowSkippedException.test1(): skip" \
+		< $(@:%.ok=%)/work/TestngThrowSkippedException.jtr > /dev/null
+	$(GREP) -s "^Total tests run: 1, Passes: 0, Failures: 0, Skips: 1" \
+		< $(@:%.ok=%)/work/TestngThrowSkippedException.jtr > /dev/null
 	echo $@ passed at `date` > $@
 
 TESTS.jtreg += $(BUILDTESTDIR)/SkippedExceptionTest.agentvm.ok
@@ -62,13 +66,17 @@ $(BUILDTESTDIR)/SkippedExceptionTest.othervm.ok: $(JTREG_IMAGEDIR)/lib/javatest.
 		$(TESTDIR)/skip \
 			> $(@:%.ok=%/jt.log) 2>&1  || \
 			true "non-zero exit code from JavaTest intentionally ignored"
-	$(GREP) -s "Test results: passed: 1; failed: 2" $(@:%.ok=%/jt.log) > /dev/null
+	$(GREP) -s "Test results: passed: 2; failed: 2" $(@:%.ok=%/jt.log) > /dev/null
 	$(GREP) -s "^TestKnownSkippedException.java \+Passed. Skipped: jtreg.SkippedException: known exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
 	$(GREP) -s "^TestUnknownJtregSkippedException.java \+Failed. Execution failed: \`main' threw exception: jtreg.SkippedException2: unknown exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
 	$(GREP) -s "^TestUnknownSkippedException.java \+Failed. Execution failed: \`main' threw exception: SkippedException: unknown exception" \
 		< $(@:%.ok=%)/report/text/summary.txt > /dev/null
+	$(GREP) -s "^test TestngThrowSkippedException.test1(): skip" \
+		< $(@:%.ok=%)/work/TestngThrowSkippedException.jtr > /dev/null
+	$(GREP) -s "^Total tests run: 1, Passes: 0, Failures: 0, Skips: 1" \
+		< $(@:%.ok=%)/work/TestngThrowSkippedException.jtr > /dev/null
 	echo $@ passed at `date` > $@
 
 TESTS.jtreg += $(BUILDTESTDIR)/SkippedExceptionTest.othervm.ok
