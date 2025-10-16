@@ -41,6 +41,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -479,7 +481,18 @@ public class Agent {
     }
 
     private boolean isAgentServerAlive() {
-        return this.process.isAlive();
+        // The agent server is considered alive if its process is alive
+        // and no hs_err<pid>.log file has been generated for the agent
+        // server's process.
+        // The presence of a hs_err<pid>.log indicates that the agent
+        // server's JVM has crashed (although the process may still be alive
+        // after crashing for a while).
+        return this.process.isAlive() && !isHsErrGenerated();
+    }
+
+    private boolean isHsErrGenerated() {
+        final String hs_errFileName = "hs_err_pid" + this.process.pid() + ".log";
+        return Files.exists(execDir.toPath().resolve(hs_errFileName));
     }
 
     public void close() {
