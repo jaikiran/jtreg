@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -265,9 +265,23 @@ public class RegressionScript extends Script {
 
                 while (!actionList.isEmpty()) {
                     Action action = actionList.remove();
-                    status = action.run();
-                    if (status.getType() != Status.PASSED)
+                    java.util.concurrent.locks.Lock executionLock;
+                    if (action.shouldExecuteExclusively()) {
+                        executionLock = testSuite.getActionExecutionLock().writeLock();
+                        msgPW.println(action.getName() + " action in " + td.getName()
+                                + " test will run exclusively");
+                    } else {
+                        executionLock = testSuite.getActionExecutionLock().readLock();
+                    }
+                    executionLock.lock();
+                    try {
+                        status = action.run();
+                    } finally {
+                        executionLock.unlock();
+                    }
+                    if (status.getType() != Status.PASSED) {
                         break;
+                    }
                 }
             }
         } catch (InterruptedException e) {

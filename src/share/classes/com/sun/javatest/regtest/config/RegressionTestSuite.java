@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 import com.sun.javatest.InterviewParameters;
 import com.sun.javatest.Script;
@@ -266,7 +268,12 @@ public final class RegressionTestSuite extends TestSuite
         return properties.getEnablePreview(td.getFile());
     }
 
+    public ReadWriteLock getActionExecutionLock() {
+        return this.actionExecutionLock;
+    }
+
     private final TestFinder.ErrorHandler errHandler;
     private final TestProperties properties;
+    private final ReadWriteLock actionExecutionLock = new StampedLock().asReadWriteLock();
     private static final I18NResourceBundle i18n = I18NResourceBundle.getBundleForClass(RegressionTestSuite.class);
 }

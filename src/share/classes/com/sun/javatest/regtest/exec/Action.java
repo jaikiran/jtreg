@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -365,6 +365,14 @@ public abstract class Action extends ActionHelper {
             throw new ParseException(MAIN_NO_SECURE_NAME);
         return value;
     } // parseSecure()
+
+    protected final void setExclusiveExecution(boolean exclusiveExecution) {
+        this.exclusiveExecution = exclusiveExecution;
+    }
+
+    final boolean shouldExecuteExclusively() {
+        return this.exclusiveExecution;
+    }
 
     //----------logging methods-------------------------------------------------
 
@@ -880,6 +888,12 @@ public abstract class Action extends ActionHelper {
     // used when the action's RegressionScript is configured to
     // run in exclusiveAccess.dir
     private Lock exclusiveAccessLock;
+
+    // set to true when a test action is configured to run exclusively
+    // i.e. no other action from the same or any other test will be
+    // run concurrently with this action. This is different than the
+    // exclusiveAccess.dir feature.
+    private boolean exclusiveExecution;
 
     protected static final boolean showCmd = Flags.get("showCmd");
     protected static final boolean showMode = Flags.get("showMode");
